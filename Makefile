@@ -1,5 +1,5 @@
-LIBRARY_VERSION=$(shell grep version src/setup.cfg | awk -F" = " '{print $$2}')
-LIBRARY_NAME=$(shell grep name src/setup.cfg | awk -F" = " '{print $$2}')
+LIBRARY_VERSION=$(shell grep "^__version__" src/ttblit/__init__.py | cut -d"'" -f2)
+LIBRARY_NAME=chilichip
 
 .PHONY: usage install uninstall
 usage:
@@ -49,10 +49,10 @@ src/LICENSE.txt: LICENSE
 	cp LICENSE src/LICENSE.txt
 
 python-wheels: python-readme python-license
-	cd src; python3 setup.py bdist_wheel
+	cd src; python3 -m build --wheel
 
 python-sdist: python-readme python-license
-	cd src; python3 setup.py sdist
+	cd src; python3 -m build --sdist
 
 python-clean:
 	-rm -r src/dist

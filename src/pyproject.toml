@@ -1,3 +1,49 @@
 [build-system]
-requires = ["setuptools>=40.8.0", "wheel"]
+requires = ["setuptools>=64"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "chilichip"
+dynamic = ["version"]
+description = "Update the ChiliChip console, install games, and build your own. Includes the 32blit asset tools."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "ChiliChip" }, { name = "Philip Howard (32blit-tools)", email = "phil@pimoroni.com" }]
+keywords = ["ChiliChip", "32Blit", "CLI", "TUI"]
+requires-python = ">=3.9"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Operating System :: POSIX :: Linux",
+    "Operating System :: MacOS",
+    "License :: OSI Approved :: MIT License",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development",
+    "Topic :: System :: Hardware",
+]
+dependencies = [
+    "click>=8",
+    "pillow",
+    "pyyaml",
+    "pyserial",
+    "tqdm",
+    "freetype-py",
+    "construct>=2.9",
+    "pyelftools",
+    "textual>=0.80",
+]
+
+[project.urls]
+Documentation = "https://cli.chilichip.eu/"
+GitHub = "https://github.com/chili-chip/chilichip-cli"
+Upstream = "https://github.com/32blit/32blit-tools"
+
+[project.scripts]
+chilichip = "chilichip.cli:main"
+32blit = "ttblit:main"
+
+[tool.setuptools.dynamic]
+version = { attr = "ttblit.__version__" }
+
+[tool.setuptools.packages.find]
+include = ["ttblit*", "chilichip*"]
