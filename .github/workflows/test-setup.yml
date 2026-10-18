@@ -17,7 +17,7 @@ jobs:
             cache-key: stm32
             release-suffix: STM32
             cmake-args: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/32blit-sdk/32blit.toolchain -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-            apt-packages: ccache gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib python3-setuptools
+            apt-packages: ccache gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib python3-setuptools python3-venv
 
     runs-on: ${{matrix.os}}
 
@@ -35,14 +35,17 @@ jobs:
         repository: 32blit/32blit-sdk
         path: 32blit-sdk
 
+    # Ubuntu 22.04's pip and setuptools are too old for pyproject.toml metadata
     - name: Install 32Blit Tools
-      working-directory: src
       run: |
-        python3 -m pip install --user .
+        python3 -m venv venv
+        venv/bin/pip install --upgrade pip
+        venv/bin/pip install ./src
+        echo "$GITHUB_WORKSPACE/venv/bin" >> $GITHUB_PATH
 
     - name: Test Setup Tool
       run: |
-        python3 -m ttblit setup --project-name Test --author-name Test --sdk-path=$GITHUB_WORKSPACE/32blit-sdk --git --vscode --visualstudio
+        python -m ttblit setup --project-name Test --author-name Test --sdk-path=$GITHUB_WORKSPACE/32blit-sdk --git --vscode --visualstudio
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/build
@@ -82,6 +85,7 @@ jobs:
     - name: Install chilichip
       run: |
         python3 -m venv venv
+        venv/bin/pip install --upgrade pip
         venv/bin/pip install ./chilichip-cli/src
         echo "$GITHUB_WORKSPACE/venv/bin" >> $GITHUB_PATH
 
