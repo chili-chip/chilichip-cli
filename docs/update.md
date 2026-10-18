@@ -70,7 +70,7 @@ The console is up to date (v1.0.1).
 ```
 
 !!! info "Loaders older than the version command"
-    Loaders built before the `32BLVERS` command don't report a version. `update` treats them as out of date and shows `Loader: unknown -> v1.0.1`. After one update, the version check works.
+    Loaders built before the `32BLVERS` command don't report a version; they print `got: 32BLVERS` instead. `update` treats them as out of date and shows `Loader: unknown -> v1.0.1`. After one update, the version check works.
 
 ## If the console doesn't restart by itself
 

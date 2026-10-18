@@ -115,25 +115,34 @@ class Console(BlitSerial):
             raise ChilichipError(f'Cannot open {port}: {e}.{hint}')
 
     def version(self):
-        """Ask the loader for its version. Older loaders do not answer and give None."""
+        """Ask the loader for its version. Older loaders don't know the command and give None."""
         self.reset_input_buffer()
-        self.write(b'32BLVERS')
+        # the loader runs a command only once the byte after the 8 byte header arrives
+        self.write(b'32BLVERS\x00')
         timeout, self.timeout = self.timeout, 1
         try:
-            if self.read(8) != b'32BLVERS':
+            reply = self.read(8)
+            if reply != b'32BLVERS':
+                # an older loader prints "got: 32BLVERS\r\n"; drop it so it can't land in the next reply
+                if reply:
+                    self.read_until_byte(b'\n')
                 return None
-            raw = bytearray()
-            while len(raw) < 64:
-                c = self.read(1)
-                if c in (b'', b'\x00'):
-                    break
-                raw += c
+            raw = self.read_until_byte(b'\x00')
             api = self.read(4)
             if len(api) != 4:
                 return None
         finally:
             self.timeout = timeout
         return LoaderVersion(raw.decode('ascii', 'replace'), struct.unpack('<HH', api))
+
+    def read_until_byte(self, end, limit=64):
+        data = bytearray()
+        while len(data) < limit:
+            c = self.read(1)
+            if c in (b'', end):
+                break
+            data += c
+        return bytes(data)
 
     def games(self):
         """List the games installed in flash, the home screen and the Bitsy player included."""

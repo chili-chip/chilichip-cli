@@ -30,13 +30,13 @@ def test_comport():
     with mock.patch("serial.tools.list_ports.comports", return_value=comports()):
         BlitSerial.validate_comport("_noidserial_")
 
-    with pytest.raises(RuntimeError):
-        # Without the mock, no blit should be connected.
-        BlitSerial.validate_comport("auto")
+    with mock.patch("serial.tools.list_ports.comports", return_value=[]):
+        with pytest.raises(RuntimeError):
+            BlitSerial.validate_comport("auto")
 
-    with pytest.raises(RuntimeError):
-        # Without the mock, no blit should be connected.
-        BlitSerial.validate_comport("_fakeserial_")
+    with mock.patch("serial.tools.list_ports.comports", return_value=[]):
+        with pytest.raises(RuntimeError):
+            BlitSerial.validate_comport("_fakeserial_")
 
 
 class BlitSerialTester(BlitSerial):

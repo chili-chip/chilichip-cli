@@ -36,11 +36,18 @@ def test_32blit_tool_finds_the_console():
 def test_version():
     c = FakeConsole(b'32BLVERS' + b'v1.0.1\x00' + struct.pack('<HH', 0, 6))
     assert c.version() == LoaderVersion('v1.0.1', (0, 6))
-    assert c.sent() == b'32BLVERS'
+    # the loader only runs a command once the byte after its 8 byte header arrives
+    assert c.sent() == b'32BLVERS\x00'
 
 
 def test_version_old_loader():
-    # older loaders don't know the command and stay silent
+    # older loaders print the unknown command; the line must not reach the next reply
+    c = FakeConsole(b'got: 32BLVERS\r\n32BL__OK')
+    assert c.version() is None
+    assert c.read(8) == b'32BL__OK'
+
+
+def test_version_no_answer():
     assert FakeConsole(b'').version() is None
 
 
