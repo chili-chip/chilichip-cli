@@ -68,7 +68,11 @@ def test_rename_truncates_long_author(tmp_path):
     assert yaml.safe_load((tmp_path / 'metadata.yml').read_text())['author'] == 'A very long auth'
 
 
-def test_new_project(tmp_path):
+def test_new_project(tmp_path, monkeypatch):
+    for var in ('GIT_AUTHOR_NAME', 'GIT_COMMITTER_NAME'):
+        monkeypatch.setenv(var, 'Ada')
+    for var in ('GIT_AUTHOR_EMAIL', 'GIT_COMMITTER_EMAIL'):
+        monkeypatch.setenv(var, 'ada@example.com')
     template = make_template(tmp_path / 'template')
     dest = project.new_project('my-game', parent=tmp_path, author='Ada', url=template.as_uri(), log=lambda *a: None)
 
