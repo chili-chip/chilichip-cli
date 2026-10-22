@@ -17,7 +17,7 @@ jobs:
             cache-key: stm32
             release-suffix: STM32
             cmake-args: -DCMAKE_TOOLCHAIN_FILE=$GITHUB_WORKSPACE/32blit-sdk/32blit.toolchain -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-            apt-packages: ccache gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib python3-setuptools
+            apt-packages: ccache gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-newlib python3-setuptools python3-venv
 
     runs-on: ${{matrix.os}}
 
@@ -35,14 +35,17 @@ jobs:
         repository: 32blit/32blit-sdk
         path: 32blit-sdk
 
+    # Ubuntu 22.04's pip and setuptools are too old for pyproject.toml metadata
     - name: Install 32Blit Tools
-      working-directory: src
       run: |
-        python3 setup.py install --user
+        python3 -m venv venv
+        venv/bin/pip install --upgrade pip
+        venv/bin/pip install ./src
+        echo "$GITHUB_WORKSPACE/venv/bin" >> $GITHUB_PATH
 
     - name: Test Setup Tool
       run: |
-        python3 -m ttblit setup --project-name Test --author-name Test --sdk-path=$GITHUB_WORKSPACE/32blit-sdk --git --vscode --visualstudio
+        python -m ttblit setup --project-name Test --author-name Test --sdk-path=$GITHUB_WORKSPACE/32blit-sdk --git --vscode --visualstudio
 
     - name: Create Build Environment
       run: cmake -E make_directory ${{runner.workspace}}/build
@@ -59,3 +62,42 @@ jobs:
         ccache --zero-stats || true
         cmake --build . --config $BUILD_TYPE -j 2
         ccache --show-stats || true
+
+  chilichip:
+    name: chilichip new and build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Install Dependencies
+      run: |
+        sudo apt update && sudo apt install libsdl2-dev libsdl2-image-dev libsdl2-net-dev
+
+    - uses: actions/checkout@v4
+      with:
+        path: chilichip-cli
+
+    - name: Grab the SDK
+      uses: actions/checkout@v4
+      with:
+        repository: chili-chip/32blit-sdk
+        path: projects/32blit-sdk
+
+    - name: Install chilichip
+      run: |
+        python3 -m venv venv
+        venv/bin/pip install --upgrade pip
+        venv/bin/pip install ./chilichip-cli/src
+        echo "$GITHUB_WORKSPACE/venv/bin" >> $GITHUB_PATH
+
+    - name: New game from the template
+      working-directory: projects
+      run: |
+        git config --global user.name CI
+        git config --global user.email ci@example.com
+        echo n | chilichip new ci-game
+
+    - name: Build for the desktop
+      working-directory: projects/ci-game
+      run: |
+        chilichip build --desktop
+        test -x out/build/linux/ci-game.elf

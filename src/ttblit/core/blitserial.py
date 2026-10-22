@@ -9,6 +9,9 @@ from tqdm import tqdm
 
 from ..core.struct import struct_blit_meta_standalone
 
+# 32Blit (STM32) and the ChiliChip console loader (TinyUSB CDC + MSC)
+BLIT_USB_IDS = {(0x0483, 0x5740), (0xCAFE, 0x4003)}
+
 
 class BlitSerialException(Exception):
     pass
@@ -22,7 +25,7 @@ class BlitSerial(serial.Serial):
     def find_comport(cls):
         ret = []
         for comport in serial.tools.list_ports.comports():
-            if comport.vid == 0x0483 and comport.pid == 0x5740:
+            if (comport.vid, comport.pid) in BLIT_USB_IDS:
                 logging.info(f'Found 32Blit on {comport.device}')
                 ret.append(comport.device)
 
@@ -40,7 +43,7 @@ class BlitSerial(serial.Serial):
 
         for comport in serial.tools.list_ports.comports():
             if comport.device == device:
-                if comport.vid == 0x0483 and comport.pid == 0x5740:
+                if (comport.vid, comport.pid) in BLIT_USB_IDS:
                     logging.info(f'Found 32Blit on {comport.device}')
                     return [device]
                 # if the user asked for a port with no vid/pid assume they know what they're doing
@@ -131,7 +134,7 @@ class BlitSerial(serial.Serial):
         self.write(b'32BL__LS\x00')
         offset_str = self.read(4)
 
-        while offset_str != '' and offset_str != b'\xff\xff\xff\xff':
+        while len(offset_str) == 4 and offset_str != b'\xff\xff\xff\xff':
             offset, = struct.unpack('<I', offset_str)
 
             size, = struct.unpack('<I', self.read(4))
