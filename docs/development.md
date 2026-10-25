@@ -66,7 +66,7 @@ python scripts/screenshots.py
     git push origin v0.8.1
     ```
 
-The [Release workflow](https://github.com/chili-chip/chilichip-cli/actions/workflows/release.yml) checks that the tag matches the version, builds the wheel and sdist, and creates the GitHub release with the changelog section as its notes.
+The [Release workflow](https://github.com/chili-chip/chilichip-cli/actions/workflows/release.yml) checks that the tag matches the version, builds the wheel and sdist, and creates the GitHub release with the changelog section as its notes. If the release was already made on GitHub's Releases page, it adds the files to it and keeps its notes.
 
 ## Upstream
 
