@@ -28,7 +28,7 @@ chilichip                               # the TUI
 
 **Docs: [cli.chilichip.eu](https://cli.chilichip.eu/)** (source in [docs/](docs/index.md)).
 
-This is a fork of [32blit-tools](https://github.com/32blit/32blit-tools). It still installs the `32blit` command, which the [ChiliChip Game SDK](https://sdk.chilichip.eu/) calls to pack assets. See [The 32blit asset tools](docs/32blit.md).
+This is a fork of [32blit-tools](https://github.com/32blit/32blit-tools). It still installs the `32blit` command, which the [ChiliChip Game SDK](https://sdk.chilichip.eu/) calls to pack assets. See [The 32blit asset tools](docs/32blit.md). All credit for the original tools goes to Pimoroni and the [32blit-tools contributors](https://github.com/32blit/32blit-tools/graphs/contributors), among them Philip Howard, Charlie Birks and Alistair Buxton. Their MIT licence and copyright notice are kept in [LICENSE](LICENSE).
 
 ## Development
 

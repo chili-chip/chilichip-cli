@@ -44,7 +44,7 @@ flowchart LR
 
 ## The 32blit command
 
-`chilichip` is a fork of [32blit-tools](https://github.com/32blit/32blit-tools). Installing it also gives you the `32blit` command, which the SDK's CMake files call to pack images, fonts and maps into your game. See [The 32blit asset tools](32blit.md).
+`chilichip` is a fork of [32blit-tools](https://github.com/32blit/32blit-tools). Installing it also gives you the `32blit` command, which the SDK's CMake files call to pack images, fonts and maps into your game. See [The 32blit asset tools](32blit.md). All credit for the original tools goes to Pimoroni and the [32blit-tools contributors](https://github.com/32blit/32blit-tools/graphs/contributors), among them Philip Howard, Charlie Birks and Alistair Buxton. Their MIT licence and copyright notice are kept in [LICENSE](https://github.com/chili-chip/chilichip-cli/blob/main/LICENSE).
 
 ## Related docs
 
