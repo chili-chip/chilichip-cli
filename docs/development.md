@@ -55,6 +55,19 @@ The TUI screenshots are made from the app itself with a fake console:
 python scripts/screenshots.py
 ```
 
+## Releases
+
+1. Set the new version in `src/ttblit/__init__.py` and add its section at the top of `src/CHANGELOG.txt`.
+2. Update the `pipx install` file name in `README.md`, `docs/index.md` and `docs/install.md`.
+3. Merge to `main`, then tag it and push the tag:
+
+    ```bash
+    git tag v0.8.1
+    git push origin v0.8.1
+    ```
+
+The [Release workflow](https://github.com/chili-chip/chilichip-cli/actions/workflows/release.yml) checks that the tag matches the version, builds the wheel and sdist, and creates the GitHub release with the changelog section as its notes.
+
 ## Upstream
 
 This is a fork of [32blit/32blit-tools](https://github.com/32blit/32blit-tools). Keep changes under `src/ttblit/` small and generic, so they can go upstream.

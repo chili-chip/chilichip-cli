@@ -1,13 +1,13 @@
 # Install
 
-`chilichip` needs Python 3.10 or newer. Install it with [pipx](https://pipx.pypa.io/), which keeps it in its own environment and puts the `chilichip` and `32blit` commands on your `PATH`.
+`chilichip` needs Python 3.10 or newer. Install it with [pipx](https://pipx.pypa.io/), which keeps it in its own environment and puts the `chilichip` and `32blit` commands on your `PATH`. The commands below install v0.8.0, the latest [release](https://github.com/chili-chip/chilichip-cli/releases/latest).
 
 === "Ubuntu / Debian / WSL"
 
     ```bash
     sudo apt install pipx git
     pipx ensurepath
-    pipx install git+https://github.com/chili-chip/chilichip-cli#subdirectory=src
+    pipx install https://github.com/chili-chip/chilichip-cli/releases/download/v0.8.0/chilichip-0.8.0-py3-none-any.whl
     ```
 
 === "macOS"
@@ -15,17 +15,17 @@
     ```bash
     brew install pipx git
     pipx ensurepath
-    pipx install git+https://github.com/chili-chip/chilichip-cli#subdirectory=src
+    pipx install https://github.com/chili-chip/chilichip-cli/releases/download/v0.8.0/chilichip-0.8.0-py3-none-any.whl
     ```
 
 === "Windows"
 
-    Install [Python](https://www.python.org/downloads/) and [Git](https://git-scm.com/download/win), then in PowerShell:
+    Install [Python](https://www.python.org/downloads/), then in PowerShell:
 
     ```powershell
     py -m pip install --user pipx
     py -m pipx ensurepath
-    pipx install git+https://github.com/chili-chip/chilichip-cli#subdirectory=src
+    pipx install https://github.com/chili-chip/chilichip-cli/releases/download/v0.8.0/chilichip-0.8.0-py3-none-any.whl
     ```
 
     Firmware updates and game installs work on Windows. To build games for the console, use WSL as the [SDK docs](https://sdk.chilichip.eu/getting-started/install/) describe.
@@ -37,7 +37,7 @@ $ chilichip --version
 chilichip, version 0.8.0
 ```
 
-Update it later with `pipx upgrade chilichip`.
+To update it later, run the `pipx install` command again with the newer release's file and `--force`. The [releases page](https://github.com/chili-chip/chilichip-cli/releases) lists every version.
 
 !!! note "Already using the 32blit tools?"
     `chilichip` includes the `32blit` command. Uninstall the old one first (`pip uninstall 32blit`, or delete the virtual environment you made for it), so only one `32blit` is on your `PATH`.

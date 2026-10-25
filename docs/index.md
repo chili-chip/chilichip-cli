@@ -16,7 +16,7 @@ Run `chilichip` with no command to open the [TUI](tui.md), which does the same j
 ## Quick start
 
 ```bash
-pipx install git+https://github.com/chili-chip/chilichip-cli#subdirectory=src
+pipx install https://github.com/chili-chip/chilichip-cli/releases/download/v0.8.0/chilichip-0.8.0-py3-none-any.whl
 chilichip update                      # bring the console up to date
 chilichip new space-cat && cd space-cat
 chilichip run                         # play it on your computer
