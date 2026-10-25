@@ -6,7 +6,7 @@
 One command for the ChiliChip console: update its firmware, install games, and make your own.
 
 ```bash
-pipx install git+https://github.com/chili-chip/chilichip-cli#subdirectory=src
+pipx install https://github.com/chili-chip/chilichip-cli/releases/download/v0.8.0/chilichip-0.8.0-py3-none-any.whl
 
 chilichip update                        # latest loader, home screen and Bitsy player
 chilichip install space-cat.blit        # or a .bitsy file
