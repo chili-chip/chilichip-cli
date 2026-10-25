@@ -1,16 +1,22 @@
 """The interactive TUI: one tab per job, all calling the same functions as the commands."""
 import os
 import pathlib
+import threading
 
 from textual.app import App, ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.widgets import (Button, DataTable, Footer, Header, Input, Label,
                              Log, RadioButton, RadioSet, Select, Static,
                              TabbedContent, TabPane)
+from tqdm import tqdm
 
 from . import ChilichipError, project
 from .console import Console, find_console
 from .firmware import fetch_firmware, make_plan, update_console
+
+# tqdm (the install progress bar) otherwise makes a multiprocessing lock, which starts a helper
+# process that is passed stderr's fd; Textual's captured stderr has fd -1, so the install fails
+tqdm.set_lock(threading.RLock())
 
 
 class ChilichipApp(App):
@@ -181,6 +187,7 @@ class ChilichipApp(App):
         self.call_from_thread(setattr, self.query_one('#flash', Button), 'disabled', True)
         update_console(firmware, plan, port, log=self.write)
         self.load_console()
+        self.check_update()
 
     # new project tab
 
