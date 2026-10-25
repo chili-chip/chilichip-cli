@@ -1,0 +1,92 @@
+site_name: chilichip CLI
+site_description: Update the ChiliChip console, install games, and build your own from the command line or a TUI.
+site_url: https://cli.chilichip.eu/
+repo_url: https://github.com/chili-chip/chilichip-cli
+repo_name: chili-chip/chilichip-cli
+edit_uri: edit/main/docs/
+copyright: chilichip CLI is a fork of <a href="https://github.com/32blit/32blit-tools">32blit-tools</a>, MIT licensed.
+
+exclude_docs: |
+  /requirements.txt
+
+theme:
+  name: material
+  logo: assets/chili.svg
+  favicon: assets/chili.svg
+  icon:
+    repo: fontawesome/brands/github
+  font:
+    text: Inter
+    code: JetBrains Mono
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+  features:
+    - navigation.sections
+    - navigation.top
+    - navigation.footer
+    - navigation.instant
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.tabs.link
+    - content.action.edit
+    - toc.follow
+
+extra_css:
+  - assets/extra.css
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+
+nav:
+  - Home: index.md
+  - Install: install.md
+  - Your console:
+      - Update the firmware: update.md
+      - Install and manage games: games.md
+  - Your games:
+      - New, build and run: projects.md
+      - Doctor: doctor.md
+  - The TUI: tui.md
+  - Reference:
+      - Commands: reference.md
+      - USB serial protocol: protocol.md
+      - The 32blit asset tools: 32blit.md
+  - Troubleshooting: troubleshooting.md
+  - Development: development.md
+
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn

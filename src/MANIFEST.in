@@ -1,6 +1,6 @@
 include CHANGELOG.txt
 include LICENSE.txt
 include README.md
-include setup.py
 include *.toml
 recursive-include ttblit *.py
+recursive-include chilichip *.py

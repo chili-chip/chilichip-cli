@@ -1,3 +1,12 @@
+0.8.0
+-----
+
+* Renamed the package to chilichip. The 32blit command stays as it is.
+* New chilichip command with a TUI: update, install, list, delete, launch, new, build, run, doctor
+* Detect the ChiliChip console (USB cafe:4003) in the 32blit command too
+* Work with bitstring 5 by dropping the bitstring dependency
+* Move packaging to pyproject.toml, require Python 3.10
+
 0.7.4
 -----
 

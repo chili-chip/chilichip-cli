@@ -21,3 +21,6 @@ library/debian/
 .vscode
 /.idea
 /venv
+site/
+src/tests/resources/*.icon.png
+src/tests/resources/*.splash.png

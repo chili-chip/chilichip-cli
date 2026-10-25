@@ -11,12 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python: ["3.8", "3.9", "3.10", "3.11"]
+        python: ["3.10", "3.12", "3.13"]
 
     steps:
-      # Linux deps
       - name: Install Dependencies
-        if: runner.os == 'Linux'
         run: |
           sudo apt update && sudo apt install gcc-arm-none-eabi
       - uses: actions/checkout@v4
@@ -26,17 +24,32 @@ jobs:
           python-version: ${{ matrix.python }}
       - name: Install Dependencies
         run: |
-          python -m pip install --upgrade setuptools tox
+          python -m pip install --upgrade pip tox
       - name: Run Tests
         working-directory: src
         run: |
           tox -e py
-      - name: Coverage
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # informational, never fails the build
+      - name: Coverage summary
+        if: ${{ matrix.python == '3.13' }}
         working-directory: src
         run: |
-          python -m pip install --upgrade coveralls
-          coveralls --service=github
-        if: ${{ matrix.python == '3.8' }}
+          echo '### Coverage' >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          .tox/py/bin/coverage report >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+          echo "::notice title=Coverage::$(.tox/py/bin/coverage report --format=total)% of lines"
 
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - name: Lint the chilichip code
+        working-directory: src
+        run: |
+          python -m pip install flake8 isort
+          flake8 --ignore E501 chilichip tests/test_chilichip_*.py tests/fakes.py
+          isort -c chilichip

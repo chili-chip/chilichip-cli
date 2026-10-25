@@ -1,7 +1,33 @@
 from math import ceil
 
-from bitstring import BitArray, Bits, ConstBitStream
 from construct import Adapter
+
+
+class BitWriter:
+    """Packs values MSB first. The last byte is padded with zero bits."""
+    def __init__(self):
+        self.value = 0
+        self.length = 0
+
+    def write(self, value, length):
+        self.value = (self.value << length) | value
+        self.length += length
+
+    def tobytes(self):
+        pad = -self.length % 8
+        return (self.value << pad).to_bytes((self.length + pad) // 8, 'big')
+
+
+class BitReader:
+    def __init__(self, data):
+        self.value = int.from_bytes(data, 'big')
+        self.remaining = len(data) * 8
+
+    def read(self, length):
+        self.remaining -= length
+        if self.remaining < 0:
+            raise ValueError('Not enough data')
+        return (self.value >> self.remaining) & ((1 << length) - 1)
 
 
 class RL:
@@ -28,42 +54,42 @@ class RL:
         # can encode longer runs up to 255+n. But this needs changes in the
         # blit engine.
         break_even = ceil(8 / (bit_length + 1))
-        bits = BitArray()
+        bits = BitWriter()
 
         for value, count in RL.repetitions(data):
             while count > break_even:
                 chunk = min(count, 0x100)
-                bits.append('0b1')
-                bits.append(bytes([chunk - 1]))
+                bits.write(1, 1)
+                bits.write(chunk - 1, 8)
                 count -= chunk
-                bits.append(BitArray(uint=value, length=bit_length))
+                bits.write(value, bit_length)
             for x in range(count):
-                bits.append('0b0')
-                bits.append(BitArray(uint=value, length=bit_length))
+                bits.write(0, 1)
+                bits.write(value, bit_length)
         return bits.tobytes()
 
     @staticmethod
     def decompress(data, bit_length, output_length):
-        stream = ConstBitStream(bytes=data)
+        stream = BitReader(data)
         result = []
         while len(result) < output_length:
-            t = stream.read(1).uint
-            if t:
-                count = stream.read(8).uint + 1
-            else:
-                count = 1
-            result.extend([stream.read(bit_length).uint] * count)
+            count = stream.read(8) + 1 if stream.read(1) else 1
+            result.extend([stream.read(bit_length)] * count)
         return bytes(result)
 
 
 class PK:
     @staticmethod
     def compress(data, bit_length):
-        return BitArray().join(BitArray(uint=x, length=bit_length) for x in data).tobytes()
+        bits = BitWriter()
+        for x in data:
+            bits.write(x, bit_length)
+        return bits.tobytes()
 
     @staticmethod
     def decompress(data, bit_length, num_pixels):
-        return bytes(i.uint for i in Bits(bytes=data).cut(bit_length))
+        stream = BitReader(data)
+        return bytes(stream.read(bit_length) for _ in range(num_pixels))
 
 
 packers = {cls.__name__: cls for cls in (PK, RL)}
