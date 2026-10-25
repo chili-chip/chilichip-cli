@@ -33,7 +33,12 @@ jobs:
         working-directory: src
         # the lines under this version's heading, up to the next version
         run: awk -v v="${GITHUB_REF_NAME#v}" '$0 == v {on = 1; getline; next} on && /^[0-9]+\.[0-9]+/ {exit} on' CHANGELOG.txt > ../notes.md
-      - name: Create the GitHub release
+      - name: Create the GitHub release, or add the files to one made on GitHub
         env:
           GH_TOKEN: ${{ github.token }}
-        run: gh release create "$GITHUB_REF_NAME" src/dist/* --title "chilichip $GITHUB_REF_NAME" --notes-file notes.md
+        run: |
+          if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
+            gh release upload "$GITHUB_REF_NAME" src/dist/* --clobber
+          else
+            gh release create "$GITHUB_REF_NAME" src/dist/* --title "chilichip $GITHUB_REF_NAME" --notes-file notes.md
+          fi
