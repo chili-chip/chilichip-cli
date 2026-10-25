@@ -1,6 +1,6 @@
 # Install
 
-`chilichip` needs Python 3.9 or newer. Install it with [pipx](https://pipx.pypa.io/), which keeps it in its own environment and puts the `chilichip` and `32blit` commands on your `PATH`.
+`chilichip` needs Python 3.10 or newer. Install it with [pipx](https://pipx.pypa.io/), which keeps it in its own environment and puts the `chilichip` and `32blit` commands on your `PATH`.
 
 === "Ubuntu / Debian / WSL"
 

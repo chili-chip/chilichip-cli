@@ -10,7 +10,7 @@ readme = "README.md"
 license = { text = "MIT" }
 authors = [{ name = "ChiliChip" }, { name = "Philip Howard (32blit-tools)", email = "phil@pimoroni.com" }]
 keywords = ["ChiliChip", "32Blit", "CLI", "TUI"]
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 classifiers = [
     "Development Status :: 4 - Beta",
     "Operating System :: POSIX :: Linux",
