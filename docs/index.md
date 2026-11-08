@@ -48,5 +48,6 @@ flowchart LR
 
 ## Related docs
 
-* [ChiliChip Game SDK](https://sdk.chilichip.eu/): how to write games.
+* [chilichip console SDK](https://sdk.chilichip.eu/): how to write games.
+* [chili game SDK](https://game-sdk.chilichip.eu/): menus, scenes, saves and music for your game.
 * [Flashing and the loader](https://sdk.chilichip.eu/console/flashing/): the manual way to do what `chilichip update` does.

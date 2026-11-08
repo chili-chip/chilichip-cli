@@ -78,7 +78,7 @@ Game projects expect the SDKs next to them, as in the SDK's [Install the tools](
 
 ```
 projects/
-├── 32blit-sdk/      # ChiliChip Game SDK
+├── 32blit-sdk/      # chilichip console SDK
 ├── pico-sdk/        # console builds only
 ├── pico-extras/     # console builds only
 └── space-cat/       # your game, made with chilichip new
