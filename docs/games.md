@@ -14,6 +14,7 @@ chilichip install *.blit --launch
 | ---- | ------------- |
 | `.blit` | Into flash, on the home screen. A game with the same title and author is replaced and keeps its saves. |
 | `.bitsy` | The `bitsy-games` folder on the console's drive. The Bitsy player lists it on the home screen. |
+| `.beat` | The `beat-games` folder on the console's drive. The Chili Beat player lists it on the home screen. |
 
 `--launch` starts the last file once it is installed.
 

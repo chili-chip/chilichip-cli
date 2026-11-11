@@ -26,7 +26,7 @@ The token is saved in `<app dir>/platform.json`, readable only by you (see [Wher
 ```console
 $ chilichip library
    12  Cat Adventure             ada               Bitsy       18 KB
-   15  Drum Night                kacper            Chili Beat  6 KB  (not on the console yet)
+   15  Drum Night                kacper            Chili Beat  6 KB
    21  Lighthouse Keeper         pawel             Bitsy       40 KB
 Install one with: chilichip install --from-platform "<title>"
 ```
@@ -41,14 +41,16 @@ chilichip install --from-platform 12 21
 chilichip install --from-platform --all
 ```
 
-Name games by title (case doesn't matter) or by id. `--all` installs every game the console can play. `--launch` starts the last one.
+Name games by title (case doesn't matter) or by id. `--all` installs every game in your library. `--launch` starts the last one.
 
 Each game is downloaded into `<app dir>/cache/platform/` and checked against the sha256 the platform lists, then installed like a [local file](games.md#install). A good copy in the cache is reused.
 
-| Kind | On the console |
-| ---- | -------------- |
-| Bitsy (`.bitsy`) | Yes, in the Bitsy player. |
-| Chili Beat (`.beat`) | Not yet. `install` skips these games with a message. |
+| Kind | Where it goes |
+| ---- | ------------- |
+| Bitsy (`.bitsy`) | `bitsy-games/` on the console's drive, played by the Bitsy player. |
+| Chili Beat (`.beat`) | `beat-games/` on the console's drive, played by the Chili Beat player. |
+
+Both players come with the factory image. A game of a kind the console has no player for is skipped with a message.
 
 ## Unlink
 

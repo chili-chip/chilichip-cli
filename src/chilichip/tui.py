@@ -52,7 +52,7 @@ class ChilichipApp(App):
                 yield Static('Looking for a console...', id='console-status')
                 yield DataTable(id='games', cursor_type='row')
                 with Horizontal(classes='row'):
-                    yield Input(placeholder='Path to a .blit or .bitsy file', id='install-path')
+                    yield Input(placeholder='Path to a .blit, .bitsy or .beat file', id='install-path')
                     yield Button('Install', id='install', variant='primary')
                 with Horizontal(classes='row'):
                     yield Button('Launch', id='launch')
@@ -204,7 +204,7 @@ class ChilichipApp(App):
         for g in games:
             kind = platform_api.ENGINE_NAMES.get(g.get('engine'), g.get('engine'))
             if not platform_api.console_can_play(g):
-                kind += ' (not on the console yet)'
+                kind += ' (no console player)'
             table.add_row(g['title'], g['author'], kind, platform_api.size_text(g['size']))
 
     def link(self):
@@ -219,7 +219,7 @@ class ChilichipApp(App):
     def install_from_library(self, game):
         if not platform_api.console_can_play(game):
             engine = platform_api.ENGINE_NAMES.get(game.get('engine'), game.get('engine'))
-            self.write(f'{engine} games do not play on the console yet.')
+            self.write(f'The console has no player for {engine} games.')
             return
         self.write(f'Downloading {game["title"]}...')
         self.install(self.platform().download(game))

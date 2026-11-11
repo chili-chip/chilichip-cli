@@ -6,7 +6,7 @@ Every command has `--help`. Errors print one line starting with `Error:` and exi
 | ------- | ------- | ------------ |
 | `chilichip` | `--version`, `--help` | Opens the [TUI](tui.md). |
 | [`chilichip update`](update.md) | `--factory`, `--force`, `--yes` | Installs the latest loader, home screen and Bitsy player. |
-| [`chilichip install FILE...`](games.md#install) | `--launch` | Installs `.blit` games and `.bitsy` files. |
+| [`chilichip install FILE...`](games.md#install) | `--launch` | Installs `.blit` games, `.bitsy` and `.beat` files. |
 | [`chilichip install --from-platform GAME...`](platform.md#install-from-the-library) | `--all`, `--launch`, `--platform` | Downloads games from your Chili Platform library and installs them. |
 | [`chilichip login`](platform.md#link-this-computer) | `--name`, `--platform` | Links this computer to your Chili Platform account with a code. |
 | [`chilichip library`](platform.md#see-your-library) | `--platform` | Lists the games in your library. |

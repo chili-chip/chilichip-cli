@@ -74,7 +74,7 @@ def update(factory, force, yes):
 @click.option('--all', 'all_games', is_flag=True, help='With --from-platform: every game in your library the console can play.')
 @PLATFORM
 def install(games, launch, from_platform, all_games, url):
-    """Install .blit games and .bitsy files on the console.
+    """Install .blit games, .bitsy and .beat files on the console.
 
     \b
     chilichip install space-cat.blit cat-adventure.bitsy
@@ -87,7 +87,7 @@ def install(games, launch, from_platform, all_games, url):
             return
     else:
         if not games:
-            raise click.UsageError('Name at least one .blit or .bitsy file.')
+            raise click.UsageError('Name at least one .blit, .bitsy or .beat file.')
         files = []
         for name in games:
             path = pathlib.Path(name)
@@ -113,7 +113,7 @@ def platform_files(names, all_games, url):
     for game in chosen:
         if not platform_api.console_can_play(game):
             engine = platform_api.ENGINE_NAMES.get(game.get('engine'), game.get('engine'))
-            click.echo(f'Skipped {game["title"]}: {engine} games do not play on the console yet.')
+            click.echo(f'Skipped {game["title"]}: the console has no player for {engine} games.')
             continue
         click.echo(f'Downloading {game["title"]}...')
         files.append((client.download(game), game['title']))
@@ -152,7 +152,7 @@ def library(url):
         return
     for game in games:
         engine = platform_api.ENGINE_NAMES.get(game.get('engine'), game.get('engine'))
-        note = '' if platform_api.console_can_play(game) else '  (not on the console yet)'
+        note = '' if platform_api.console_can_play(game) else '  (no console player)'
         click.echo(f'{game["id"]:5d}  {game["title"]:24}  {game["author"]:16}  {engine:10}  {platform_api.size_text(game["size"])}{note}')
     click.echo('Install one with: chilichip install --from-platform "<title>"')
 

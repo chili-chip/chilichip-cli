@@ -26,7 +26,7 @@ DEFAULT_URL = 'https://platform.chilichip.eu'
 DEVICE_GRANT = 'urn:ietf:params:oauth:grant-type:device_code'
 NAME_LENGTH = 60  # the platform keeps the first 60 characters
 # engines the console can play, and how the CLI installs them
-CONSOLE_ENGINES = {'bitsy': 'Bitsy', 'blit': 'ChiliChip'}
+CONSOLE_ENGINES = {'bitsy': 'Bitsy', 'beat': 'Chili Beat', 'blit': 'ChiliChip'}
 ENGINE_NAMES = {'bitsy': 'Bitsy', 'beat': 'Chili Beat', 'blit': 'ChiliChip'}
 
 

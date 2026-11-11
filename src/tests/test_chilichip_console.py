@@ -106,8 +106,17 @@ def test_install_bitsy(tmp_path):
     assert c.sent() == b'32BLSAVE/bitsy-games/cat.bitsy\x008\x00cat game'
 
 
+def test_install_beat(tmp_path):
+    # the Chili Beat player is a handler app; the home screen lists .beat files one folder down
+    game = tmp_path / 'bee-home.beat'
+    game.write_text('{"beat":1}')
+    c = FakeConsole(b'32BL__OK')
+    c.install(game)
+    assert c.sent() == b'32BLSAVE/beat-games/bee-home.beat\x0010\x00{"beat":1}'
+
+
 def test_install_other_files(tmp_path):
-    with pytest.raises(ChilichipError, match='.blit and .bitsy'):
+    with pytest.raises(ChilichipError, match='.blit, .bitsy and .beat'):
         FakeConsole().install(tmp_path / 'notes.txt')
 
 

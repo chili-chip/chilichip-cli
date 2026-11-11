@@ -40,8 +40,6 @@ Shows the games in your [Chili Platform library](platform.md).
 * **Install on console**: downloads the selected game, checks it and installs it on the connected console.
 * **Refresh**: reads the library again, for example after you buy a game.
 
-Chili Beat games are listed but can't be installed on the console yet.
-
 ## Update
 
 ![Update tab](assets/screenshots/tui-update.svg){ .tui }

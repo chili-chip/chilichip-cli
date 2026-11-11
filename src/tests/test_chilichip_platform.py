@@ -131,7 +131,7 @@ def test_library_lists_games_with_the_device_token():
     assert headers['Authorization'] == 'Device device-token-123'
     assert 'Cat Adventure' in result.output
     assert 'Drum Night' in result.output
-    assert 'not on the console yet' in result.output  # Chili Beat has no console player
+    assert 'Chili Beat' in result.output
 
 
 def test_library_needs_login():
@@ -184,8 +184,7 @@ def test_install_by_id_and_all(config):
 
         result, install = install_from_platform(platform, '--all')
     assert result.exit_code == 0, result.output
-    assert install.call_count == 1  # the Chili Beat game is skipped
-    assert 'Skipped Drum Night' in result.output
+    assert [c.args[0].name for c in install.call_args_list] == ['cat-adventure.bitsy', 'drum-night.beat']
 
 
 def test_install_unknown_game():
@@ -292,6 +291,16 @@ def test_tui_library_tab_lists_games(monkeypatch):
     with FakePlatform(games=library_games()) as platform:
         login(platform)
         run_tui(check, monkeypatch, platform.url)
+
+
+def test_unknown_engine_is_skipped():
+    games = [{'id': 3, 'title': 'Robot', 'data': b'x', 'engine': 'robot', 'extension': '.robot'}]
+    with FakePlatform(games=games) as platform:
+        login(platform)
+        result, install = install_from_platform(platform, '--all')
+    assert result.exit_code == 0, result.output
+    assert 'Skipped Robot' in result.output
+    install.assert_not_called()
 
 
 def test_tui_installs_a_library_game(monkeypatch):
