@@ -17,6 +17,8 @@ chilichip install *.blit --launch
 
 `--launch` starts the last file once it is installed.
 
+Games you bought or released on Chili Platform install straight from your library: `chilichip install --from-platform "Cat Adventure"`. See [Games from Chili Platform](platform.md).
+
 ### Checks before uploading
 
 `install` reads the `.blit` header first and refuses files the console would reject:

@@ -3,7 +3,7 @@ import pathlib
 
 import click
 
-from . import __version__, project
+from . import __version__, platform_api, project
 from .console import Console, find_console
 from .firmware import (factory_install, fetch_firmware, make_plan,
                        update_console)
@@ -11,6 +11,8 @@ from .project import build, find_project, run_game
 
 TARGET = click.option('--console', 'target', flag_value='console', help='Build for the console (.blit).')
 DESKTOP = click.option('--desktop', 'target', flag_value='desktop', default=True, help='Build for this computer (default).')
+PLATFORM = click.option('--platform', 'url', envvar='CHILICHIP_PLATFORM_URL', metavar='URL',
+                        help=f'Chili Platform address (default {platform_api.DEFAULT_URL}, or $CHILICHIP_PLATFORM_URL).')
 
 
 @click.group(invoke_without_command=True)
@@ -66,15 +68,93 @@ def update(factory, force, yes):
 
 
 @main.command()
-@click.argument('files', nargs=-1, required=True, type=click.Path(exists=True, dir_okay=False, path_type=pathlib.Path))
-@click.option('--launch', is_flag=True, help='Start the last file after installing it.')
-def install(files, launch):
-    """Install .blit games and .bitsy files on the console."""
+@click.argument('games', nargs=-1)
+@click.option('--launch', is_flag=True, help='Start the last game after installing it.')
+@click.option('--from-platform', is_flag=True, help='GAMES are titles or ids from your Chili Platform library.')
+@click.option('--all', 'all_games', is_flag=True, help='With --from-platform: every game in your library the console can play.')
+@PLATFORM
+def install(games, launch, from_platform, all_games, url):
+    """Install .blit games and .bitsy files on the console.
+
+    \b
+    chilichip install space-cat.blit cat-adventure.bitsy
+    chilichip install --from-platform "Cat Adventure"
+    chilichip install --from-platform --all
+    """
+    if from_platform:
+        files = platform_files(games, all_games, url)
+        if not files:
+            return
+    else:
+        if not games:
+            raise click.UsageError('Name at least one .blit or .bitsy file.')
+        files = []
+        for name in games:
+            path = pathlib.Path(name)
+            if not path.is_file():
+                raise click.BadParameter(f'File {name!r} does not exist.', param_hint="'GAMES...'")
+            files.append((path, path.name))
+
     with Console(find_console()) as console:
         version = console.version()
-        for i, path in enumerate(files):
+        for i, (path, title) in enumerate(files):
             console.install(path, launch=launch and i == len(files) - 1, loader_api=version.api if version else None)
-            click.echo(f'Installed {path.name}')
+            click.echo(f'Installed {title}')
+
+
+def platform_files(names, all_games, url):
+    """Download the chosen library games; returns (path, title) for the ones the console can play."""
+    if not names and not all_games:
+        raise click.UsageError('Name a game from your library, or use --all. See: chilichip library')
+    client = platform_api.Platform(url, platform_api.load_token(platform_api.platform_url(url)))
+    library = client.library()
+    chosen = library if all_games else platform_api.pick_games(library, names)
+    files = []
+    for game in chosen:
+        if not platform_api.console_can_play(game):
+            engine = platform_api.ENGINE_NAMES.get(game.get('engine'), game.get('engine'))
+            click.echo(f'Skipped {game["title"]}: {engine} games do not play on the console yet.')
+            continue
+        click.echo(f'Downloading {game["title"]}...')
+        files.append((client.download(game), game['title']))
+    return files
+
+
+@main.command()
+@click.option('--name', help='How this computer shows in your account (default: chilichip CLI on <computer name>).')
+@PLATFORM
+def login(name, url):
+    """Link this computer to your Chili Platform account with a code."""
+    device = platform_api.login(platform_api.platform_url(url), name or platform_api.default_name())
+    click.echo(f'Linked as "{device.get("name", name)}". Next: chilichip library')
+
+
+@main.command()
+@PLATFORM
+def logout(url):
+    """Forget this computer's link to Chili Platform."""
+    url = platform_api.platform_url(url)
+    if platform_api.forget_token(url):
+        click.echo(f'Forgot the link to {url}.')
+    else:
+        click.echo(f'This computer was not linked to {url}.')
+    click.echo(f'To revoke it for good, remove the device in Settings: {url}/settings#devices')
+
+
+@main.command()
+@PLATFORM
+def library(url):
+    """List the games in your Chili Platform library."""
+    url = platform_api.platform_url(url)
+    games = platform_api.Platform(url, platform_api.load_token(url)).library()
+    if not games:
+        click.echo('Your library is empty. Get games at ' + url)
+        return
+    for game in games:
+        engine = platform_api.ENGINE_NAMES.get(game.get('engine'), game.get('engine'))
+        note = '' if platform_api.console_can_play(game) else '  (not on the console yet)'
+        click.echo(f'{game["id"]:5d}  {game["title"]:24}  {game["author"]:16}  {engine:10}  {platform_api.size_text(game["size"])}{note}')
+    click.echo('Install one with: chilichip install --from-platform "<title>"')
 
 
 @main.command('list')

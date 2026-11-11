@@ -1,3 +1,10 @@
+Unreleased
+----------
+
+* chilichip login, logout and library: link this computer to Chili Platform with a code (RFC 8628 device flow)
+* chilichip install --from-platform GAME... / --all: download library games, check their sha256 and install them over USB
+* TUI: Library tab
+
 0.8.0
 -----
 

@@ -22,6 +22,7 @@ chilichip                               # the TUI
 | `chilichip update [--factory] [--force] [--yes]` | Updates the console firmware. Games and saves stay. |
 | `chilichip install FILE... [--launch]` | Installs `.blit` and `.bitsy` files over USB. |
 | `chilichip list`, `launch TITLE`, `delete TITLE` | Manages installed games. |
+| `chilichip login`, `library`, `install --from-platform GAME` | Links this computer to your [Chili Platform](https://platform.chilichip.eu) account and installs games from your library over USB. |
 | `chilichip new NAME [--template game\|rpg]` | Makes a new game from the ChiliChip template. |
 | `chilichip build [--console]`, `run [--console]` | Builds the game, and starts it on the desktop or the console. |
 | `chilichip doctor` | Checks tools, SDKs and the console. |

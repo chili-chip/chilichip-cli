@@ -7,6 +7,10 @@ Every command has `--help`. Errors print one line starting with `Error:` and exi
 | `chilichip` | `--version`, `--help` | Opens the [TUI](tui.md). |
 | [`chilichip update`](update.md) | `--factory`, `--force`, `--yes` | Installs the latest loader, home screen and Bitsy player. |
 | [`chilichip install FILE...`](games.md#install) | `--launch` | Installs `.blit` games and `.bitsy` files. |
+| [`chilichip install --from-platform GAME...`](platform.md#install-from-the-library) | `--all`, `--launch`, `--platform` | Downloads games from your Chili Platform library and installs them. |
+| [`chilichip login`](platform.md#link-this-computer) | `--name`, `--platform` | Links this computer to your Chili Platform account with a code. |
+| [`chilichip library`](platform.md#see-your-library) | `--platform` | Lists the games in your library. |
+| [`chilichip logout`](platform.md#unlink) | `--platform` | Forgets the link on this computer. |
 | [`chilichip list`](games.md#list) | | Lists the loader version and installed games. |
 | [`chilichip launch TITLE`](games.md#launch) | | Starts an installed game. |
 | [`chilichip delete TITLE`](games.md#delete) | `--yes` | Deletes an installed game. Saves stay. |
@@ -19,6 +23,7 @@ Every command has `--help`. Errors print one line starting with `Error:` and exi
 
 | Variable | Effect |
 | -------- | ------ |
+| `CHILICHIP_PLATFORM_URL` | The Chili Platform address for `login`, `library`, `logout` and `install --from-platform`. Default `https://platform.chilichip.eu`. |
 | `GITHUB_TOKEN` | Sent to the GitHub API by `update`, to avoid the rate limit of 60 requests an hour. Any token works; it needs no scopes. |
 
 ## Files
@@ -26,6 +31,8 @@ Every command has `--help`. Errors print one line starting with `Error:` and exi
 | Path | What |
 | ---- | ---- |
 | `<app dir>/cache/` | Downloaded firmware, see [Where the downloads go](update.md#where-the-downloads-go). |
+| `<app dir>/cache/platform/` | Games downloaded from Chili Platform. |
+| `<app dir>/platform.json` | The device token from `chilichip login`, one per platform address. Only you can read it. |
 | `out/build/linux/`, `out/build/vgc-blit/` | Build folders inside a game, made by `build` and `run`. |
 
 ## Exit codes
