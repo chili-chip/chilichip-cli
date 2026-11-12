@@ -74,6 +74,7 @@ nav:
   - Your console:
       - Update the firmware: update.md
       - Install and manage games: games.md
+      - Games from Chili Platform: platform.md
   - Your games:
       - New, build and run: projects.md
       - Doctor: doctor.md

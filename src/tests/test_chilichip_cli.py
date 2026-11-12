@@ -15,7 +15,7 @@ def invoke(*args, **kwargs):
 def test_help_lists_commands():
     result = invoke('--help')
     assert result.exit_code == 0
-    for command in ('update', 'install', 'list', 'delete', 'launch', 'new', 'build', 'run', 'doctor'):
+    for command in ('update', 'install', 'list', 'delete', 'launch', 'new', 'build', 'run', 'doctor', 'login', 'logout', 'library'):
         assert command in result.output
 
 
@@ -93,7 +93,7 @@ def test_tui_starts_without_console():
             async with app.run_test() as pilot:
                 await pilot.pause()
                 assert 'No console found' in str(app.query_one('#console-status').render())
-                for tab in ('console', 'update', 'new', 'build'):
+                for tab in ('console', 'library', 'update', 'new', 'build'):
                     assert app.query_one(f'#{tab}')
 
     asyncio.run(run())

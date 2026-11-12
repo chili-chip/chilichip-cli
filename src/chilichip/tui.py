@@ -10,7 +10,7 @@ from textual.widgets import (Button, DataTable, Footer, Header, Input, Label,
                              TabbedContent, TabPane)
 from tqdm import tqdm
 
-from . import ChilichipError, project
+from . import ChilichipError, platform_api, project
 from .console import Console, find_console
 from .firmware import fetch_firmware, make_plan, update_console
 
@@ -40,21 +40,31 @@ class ChilichipApp(App):
         self.games = []
         self.update_plan = None
         self.delete_armed = False
+        self.library = []
+        self.stop = threading.Event()  # ends a pending link when the TUI quits
+        self.platform_url = platform_api.platform_url(os.environ.get('CHILICHIP_PLATFORM_URL'))
 
     def compose(self) -> ComposeResult:
         cwd = str(pathlib.Path.cwd())
         yield Header()
-        with TabbedContent(initial='console'):
+        with TabbedContent(initial='console', id='tabs'):
             with TabPane('Console', id='console'):
                 yield Static('Looking for a console...', id='console-status')
                 yield DataTable(id='games', cursor_type='row')
                 with Horizontal(classes='row'):
-                    yield Input(placeholder='Path to a .blit or .bitsy file', id='install-path')
+                    yield Input(placeholder='Path to a .blit, .bitsy or .beat file', id='install-path')
                     yield Button('Install', id='install', variant='primary')
                 with Horizontal(classes='row'):
                     yield Button('Launch', id='launch')
                     yield Button('Delete', id='delete', variant='error')
                     yield Button('Refresh', id='refresh')
+            with TabPane('Library', id='library'):
+                yield Static('Checking your Chili Platform library...', id='library-status')
+                yield DataTable(id='library-games', cursor_type='row')
+                with Horizontal(classes='row'):
+                    yield Button('Install on console', id='library-install', variant='primary')
+                    yield Button('Link this computer', id='link')
+                    yield Button('Refresh', id='library-refresh')
             with TabPane('Update', id='update'):
                 yield Static('Check for the latest loader, home screen and Bitsy player.', id='update-status')
                 with Horizontal(classes='row'):
@@ -88,7 +98,12 @@ class ChilichipApp(App):
     def on_mount(self):
         os.environ.setdefault('TQDM_DISABLE', '1')  # progress bars would draw over the TUI
         self.query_one('#games', DataTable).add_columns('Title', 'Version', 'Author', 'Size')
+        self.query_one('#library-games', DataTable).add_columns('Title', 'Author', 'Kind', 'Size')
         self.action_refresh()
+        self.background(self.load_library)
+
+    def on_unmount(self):
+        self.stop.set()
 
     # helpers
 
@@ -160,6 +175,61 @@ class ChilichipApp(App):
             console.install(path, loader_api=version.api if version else None)
             self.write(f'Installed {path.name}')
         self.with_console(action)
+
+    # library tab
+
+    def platform(self):
+        return platform_api.Platform(self.platform_url, platform_api.load_token(self.platform_url))
+
+    def load_library(self):
+        client = self.platform()
+        if not client.token:
+            self.set_text('#library-status', f'Not linked to {self.platform_url}. '
+                          'Press "Link this computer" to see your games here.')
+            self.call_from_thread(self.show_library, [])
+            return
+        try:
+            games = client.library()
+        except ChilichipError as e:
+            self.set_text('#library-status', e.message)
+            self.call_from_thread(self.show_library, [])
+            return
+        self.set_text('#library-status', f'Linked to {self.platform_url}. {len(games)} games in your library.')
+        self.call_from_thread(self.show_library, games)
+
+    def show_library(self, games):
+        self.library = games
+        table = self.query_one('#library-games', DataTable)
+        table.clear()
+        for g in games:
+            kind = platform_api.ENGINE_NAMES.get(g.get('engine'), g.get('engine'))
+            if not platform_api.console_can_play(g):
+                kind += ' (no console player)'
+            table.add_row(g['title'], g['author'], kind, platform_api.size_text(g['size']))
+
+    def link(self):
+        def show(line):
+            self.write(line)
+            if 'code:' in line:
+                self.set_text('#library-status', line)
+        platform_api.login(self.platform_url, platform_api.default_name(), echo=show, stop=self.stop)
+        self.write('Linked.')
+        self.load_library()
+
+    def install_from_library(self, game):
+        if not platform_api.console_can_play(game):
+            engine = platform_api.ENGINE_NAMES.get(game.get('engine'), game.get('engine'))
+            self.write(f'The console has no player for {engine} games.')
+            return
+        self.write(f'Downloading {game["title"]}...')
+        self.install(self.platform().download(game))
+
+    def selected_library_game(self):
+        table = self.query_one('#library-games', DataTable)
+        if not self.library or table.cursor_row is None:
+            self.write('Select a game first.')
+            return None
+        return self.library[table.cursor_row]
 
     # update tab
 
@@ -233,6 +303,14 @@ class ChilichipApp(App):
             elif game:
                 self.delete_armed = False
                 self.background(self.with_console, lambda c: c.delete(game.block))
+        elif button == 'library-refresh':
+            self.background(self.load_library)
+        elif button == 'link':
+            self.background(self.link)
+        elif button == 'library-install':
+            game = self.selected_library_game()
+            if game:
+                self.background(self.install_from_library, game)
         elif button == 'check':
             self.background(self.check_update)
         elif button == 'flash' and self.update_plan:

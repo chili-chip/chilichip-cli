@@ -30,6 +30,16 @@ Shows the connected console, its loader version and the installed games.
 * **Delete**: press twice to delete the selected game. Its saves stay.
 * **Refresh**: reads the console again, for example after plugging it in.
 
+## Library
+
+![Library tab](assets/screenshots/tui-library.svg){ .tui }
+
+Shows the games in your [Chili Platform library](platform.md).
+
+* **Link this computer**: shows a code to enter on the website's link page, as [`chilichip login`](platform.md#link-this-computer) does. The tab fills in once you approve it.
+* **Install on console**: downloads the selected game, checks it and installs it on the connected console.
+* **Refresh**: reads the library again, for example after you buy a game.
+
 ## Update
 
 ![Update tab](assets/screenshots/tui-update.svg){ .tui }

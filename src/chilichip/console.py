@@ -23,6 +23,8 @@ BLOCK_SIZE = 64 * 1024  # games are installed at 64 KB flash blocks
 DEVICE_RP2350 = 3  # BlitDevice::RP2350 in launcher-shared/executable.hpp
 DEVICE_NAMES = {0: '32Blit (old header)', 1: '32Blit', 2: 'RP2040', 3: 'RP2350'}
 BITSY_FOLDER = '/bitsy-games'  # the Bitsy player lists .bitsy files from here
+# the home screen lists files of a handler app (like the Chili Beat player) one folder down
+BEAT_FOLDER = '/beat-games'
 
 
 @dataclass(frozen=True)
@@ -159,7 +161,7 @@ class Console(BlitSerial):
         ]
 
     def install(self, path, launch=False, loader_api=None):
-        """Install a .blit into flash, or copy a .bitsy for the Bitsy player."""
+        """Install a .blit into flash, or copy a .bitsy or .beat file for its player."""
         path = pathlib.Path(path)
         suffix = path.suffix.lower()
         if suffix == '.blit':
@@ -167,8 +169,10 @@ class Console(BlitSerial):
             drive, folder = 'flash', pathlib.PurePosixPath('/')
         elif suffix == '.bitsy':
             drive, folder = 'sd', pathlib.PurePosixPath(BITSY_FOLDER)
+        elif suffix == '.beat':
+            drive, folder = 'sd', pathlib.PurePosixPath(BEAT_FOLDER)
         else:
-            raise ChilichipError(f'{path.name}: only .blit and .bitsy files can be installed.')
+            raise ChilichipError(f'{path.name}: only .blit, .bitsy and .beat files can be installed.')
 
         try:
             self.send_file(path, drive, folder, auto_launch=launch)

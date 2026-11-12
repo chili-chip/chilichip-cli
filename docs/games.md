@@ -14,8 +14,11 @@ chilichip install *.blit --launch
 | ---- | ------------- |
 | `.blit` | Into flash, on the home screen. A game with the same title and author is replaced and keeps its saves. |
 | `.bitsy` | The `bitsy-games` folder on the console's drive. The Bitsy player lists it on the home screen. |
+| `.beat` | The `beat-games` folder on the console's drive. The Chili Beat player lists it on the home screen. |
 
 `--launch` starts the last file once it is installed.
+
+Games you bought or released on Chili Platform install straight from your library: `chilichip install --from-platform "Cat Adventure"`. See [Games from Chili Platform](platform.md).
 
 ### Checks before uploading
 
