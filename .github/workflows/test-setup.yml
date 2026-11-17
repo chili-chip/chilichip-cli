@@ -33,9 +33,12 @@ jobs:
         sudo apt update && sudo apt install ${{matrix.apt-packages}}
 
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      with:
+        persist-credentials: false
     - name: Grab the SDK
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       with:
+        persist-credentials: false
         repository: 32blit/32blit-sdk
         path: 32blit-sdk
 
@@ -78,11 +81,13 @@ jobs:
 
     - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       with:
+        persist-credentials: false
         path: chilichip-cli
 
     - name: Grab the SDK
       uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
       with:
+        persist-credentials: false
         repository: chili-chip/32blit-sdk
         path: projects/32blit-sdk
 
